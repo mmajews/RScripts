@@ -50,9 +50,11 @@ for(dimension in dimensions){
   
   max_coord <- side_lenght_hypercube/2
   
+  png(file = paste(toString(dimension),"_sphere_cube_on_2D.png",sep="")) 
   plot(-max_coord:max_coord, -max_coord:max_coord, type = "n", asp = 1, main = paste("n=",toString(dimension),sep=""))
   points(points_in_cube[,1], points_in_cube[,2], col = "red")
   points(points_in_sphere[,1], points_in_sphere[,1], col = "blue")
   draw.circle(0, 0, max_coord, border = "blue")
   rect(-max_coord, -max_coord, max_coord, max_coord, border = "red")
+  dev.off()
 }
