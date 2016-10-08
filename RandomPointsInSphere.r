@@ -1,4 +1,5 @@
 library(stargazer)
+library("plotrix")
 
 side_lenght_hypercube <- 10
 number_of_points_to_generate <-1500
@@ -24,24 +25,34 @@ for(current_dimension in minimum_dimension:maximum_dimension)
   #Hypershpere generation
   for (i in 1:number_of_points_to_generate){
     coordinates <- runif(current_dimension, -side_lenght_hypercube/2, side_lenght_hypercube/2)
-    coff <- 0
-    for (coord in coordinates){
-      coff <- coff + coord^2
+    coefficient <- 0
+    for(elem in coordinates) {
+      coefficient <- coefficient + elem^2
     }
-    coff <- sqrt(coff)
-    coordinates <- ((side_lenght_hypercube / 2 * runif(n=1,min = 0, max = 1))^(1/current_dimension)/coff) * coordinates
+    coefficient <- sqrt(coefficient)
+    coordinates <- (side_lenght_hypercube/2 * (runif(n = 1, min = 0, max = 1))^(1/current_dimension)/coefficient) * coordinates
     selected_points_sphere[i,] <- coordinates
   }
   
   all_points_in_sphere[[current_dimension]] <-selected_points_sphere
   all_points_in_cube[[current_dimension]] <-selected_points_cube
-  
 }
 
 
-#Generate plots with 
+#Generate plots with given dimensions
 dimensions = c(10, 50 , 100, 150 ,200)
 for(dimension in dimensions){
-  points_in_cube = all_points_in_cube[[dimension]]
+  points_in_cube <- all_points_in_cube[[dimension]]
+  points_in_cube <- points_in_cube[,c(1,2)]
+  
   points_in_sphere = all_points_in_sphere[[dimension]]
+  points_in_sphere <- points_in_sphere[,c(1,2)]
+  
+  max_coord <- side_lenght_hypercube/2
+  
+  plot(-max_coord:max_coord, -max_coord:max_coord, type = "n", asp = 1, main = paste("n=",toString(dimension),sep=""))
+  points(points_in_cube[,1], points_in_cube[,2], col = "red")
+  points(points_in_sphere[,1], points_in_sphere[,1], col = "blue")
+  draw.circle(0, 0, max_coord, border = "blue")
+  rect(-max_coord, -max_coord, max_coord, max_coord, border = "red")
 }
