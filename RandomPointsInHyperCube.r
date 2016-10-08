@@ -37,12 +37,12 @@ for(current_dimension in minimum_dimension:maximum_dimension)
   }
   
   variance <- var(distances_beetwen_points)
-  expected_value <- NA
+  expected_value <- weighted.mean(distances_beetwen_points, rep(0.001, 1000))
   parameters_beetwen_points[current_dimension, ] <- c(current_dimension, variance, expected_value)
   all_distances_beetwen_points[[current_dimension]] <- distances_beetwen_points
   
   variance_point_corner <- var(distances_beetwen_point_and_corner)
-  expected_value_point_corner <- NA
+  expected_value_point_corner <- weighted.mean(distances_beetwen_point_and_corner, rep(0.001, 1000))
   parameters_beetwen_point_and_corner[current_dimension, ] <- c(current_dimension, variance_point_corner, expected_value_point_corner)
   all_distances_beetwen_point_and_corner[[current_dimension]] <-distances_beetwen_point_and_corner
   
@@ -51,7 +51,15 @@ for(current_dimension in minimum_dimension:maximum_dimension)
   remove(distances_beetwen_point_and_corner)
 }
 
+dimensions =c(2,10,50,100,150,200)
+#Drawing for hypercube distances between points
 
+for(dimension in dimensions){
+  hist(as.vector(all_distances_beetwen_points[dimension][[1]]), main = paste("n=",toString(dimension),sep=""),xlab = "Distance between points", col="darkgreen")
+}
 
-
+#Drawing for hypercube distances between point and fixed corner
+for(dimension in dimensions){
+  hist(as.vector(all_distances_beetwen_point_and_corner[dimension][[1]]), main = paste("n=",toString(dimension),sep=""),xlab = "Distance between point and corner", col="darkgreen")
+}
 
