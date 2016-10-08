@@ -1,9 +1,11 @@
 library(stargazer)
 library("plotrix")
+library("ggplot2")
+
 
 side_lenght_hypercube <- 10
-number_of_points_to_generate <-100
-maximum_dimension <- 20
+number_of_points_to_generate <-1500
+maximum_dimension <- 200
 minimum_dimension <- 3
 
 all_points_in_cube = list()
@@ -84,15 +86,64 @@ for (dimension in minimum_dimension:maximum_dimension){
   averages_cube[1, dimension ] <- mean(unlist(distances_cube))
   averages_sphere[1, dimension ] <- mean(unlist(distances_sphere))
 }
-#(file = paste(toString(dimension),"_bar_averages_distances.png",sep="")) 
+(file = paste(toString(dimension),"_bar_averages_distances.png",sep="")) 
 averages_cube <- averages_cube[ , -c(1,2)]
 barplot(averages_cube,main = "Average distance from center for cube", xlab = "Dimension", ylab = "Distance", col = "darkblue")
-#dev.off()
+dev.off()
 
-#png(file = paste(toString(dimension),"_sphere_averages_distances.png",sep="")) 
+png(file = paste(toString(dimension),"_sphere_averages_distances.png",sep="")) 
 averages_sphere <- averages_sphere[,-c(1,2)]
 barplot(averages_sphere,main = "Average distance from centerfor sphere", xlab = "Dimension", ylab = "Distance", col = "darkblue")
-#dev.off()
+dev.off()
 
+
+#Number of point depending on r parameter
+#TO DO REPLACE
+dimensions = c(10,50,100,150,200)
+for (current_dimension in dimensions){
+  center_coordinate = rep(0, current_dimension)
+  r_distance = dist(rbind(center_coordinate, rep(side_lenght_hypercube/2,current_dimension)))
+  points_regarding_r_cube = matrix(NA, 1, as.integer(r_distance))
+  colnames(points_regarding_r_cube) <- do.call("expression", lapply(1:as.integer(r_distance), function(i) i))
+  points_regarding_r_sphere = matrix(NA, 1, as.integer(r_distance))
+  colnames(points_regarding_r_sphere) <- do.call("expression", lapply(1:as.integer(r_distance), function(i) i))
+  
+  for(i in 1:as.integer(r_distance))
+  {
+    points_cube_count = list()
+    points_sphere_count=list()
+    
+    points_in_cube <- all_points_in_cube[[dimension]]
+    for(point in points_in_cube){
+      distance <- dist(rbind(center_coordinate, point))
+      if(distance < i){
+        points_cube_count <- c(points_cube_count, distance)
+      }
+    }
+    
+    points_in_sphere = all_points_in_sphere[[dimension]]
+    for(point in points_in_sphere){
+      distance <- dist(rbind(center_coordinate, point))
+      if(distance < i){
+        points_sphere_count <- c(points_sphere_count, distance)
+      }
+    }
+    
+    points_regarding_r_cube[,i]<-length(points_cube_count)
+    points_regarding_r_sphere[,i]<-length(points_sphere_count)
+  }
+  
+  #final = dim(rbind(points_regarding_r_sphere, points_regarding_r_cube))
+  #barplot(points_regarding_r_cube ,main = "Number of point in R range", xlab = "R", ylab = "Number of elements", col = "darkblue")
+  
+  final <- list(points_regarding_r_sphere, points_regarding_r_cube)
+  final <- do.call(rbind, final)
+  
+  #your data...
+  #...and you are sorted
+  png(file = paste(toString(dimension),paste("_distance_from_center_sphere_cube_n",current_dimension,".png"),sep="")) 
+  barplot(final, xlab = "R", ylab = "Number of points", main = paste("Number of points <R for N=",current_dimension,sep = ""), legend = c("Sphere", "Cube"), col=c("yellow","red"))
+  dev.off()
+}
 
 
