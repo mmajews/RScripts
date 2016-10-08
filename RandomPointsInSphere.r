@@ -1,7 +1,4 @@
-library(stargazer)
 library("plotrix")
-library("ggplot2")
-
 
 side_lenght_hypercube <- 10
 number_of_points_to_generate <-1500
@@ -41,8 +38,7 @@ for(current_dimension in minimum_dimension:maximum_dimension)
 
 
 #Generate plots with given dimensions
-#dimensions = c(10, 50 , 100, 150 ,200)
-dimensions = c(3)
+dimensions = c(10, 50 , 100, 150 ,200)
 for(dimension in dimensions){
   points_in_cube <- all_points_in_cube[[dimension]]
   points_in_cube <- points_in_cube[,c(1,2)]
@@ -98,22 +94,34 @@ dev.off()
 
 
 #Number of point depending on r parameter
-#TO DO REPLACE
 dimensions = c(10,50,100,150,200)
 for (current_dimension in dimensions){
   center_coordinate = rep(0, current_dimension)
-  r_distance = dist(rbind(center_coordinate, rep(side_lenght_hypercube/2,current_dimension)))
-  points_regarding_r_cube = matrix(NA, 1, as.integer(r_distance))
-  colnames(points_regarding_r_cube) <- do.call("expression", lapply(1:as.integer(r_distance), function(i) i))
-  points_regarding_r_sphere = matrix(NA, 1, as.integer(r_distance))
-  colnames(points_regarding_r_sphere) <- do.call("expression", lapply(1:as.integer(r_distance), function(i) i))
   
-  for(i in 1:as.integer(r_distance))
+  coordinates <- runif(current_dimension, -side_lenght_hypercube/2, side_lenght_hypercube/2)
+  coefficient <- 0
+  for(elem in coordinates) {
+    coefficient <- coefficient + elem^2
+  }
+  coefficient <- sqrt(coefficient)
+  coordinates <- (side_lenght_hypercube/2 * (runif(n = 1, min = 0, max = 1))/coefficient) * coordinates
+  r_distance = dist(rbind(center_coordinate, coordinates))
+  
+  sequence <- seq(r_distance/10, r_distance, by=(r_distance/10))
+  sequence <- lapply(sequence, function(x) round(x, digits = 2))
+  
+  points_regarding_r_cube = matrix(NA, 1, length(sequence))
+  colnames(points_regarding_r_cube) <- sequence
+  points_regarding_r_sphere = matrix(NA, 1, length(sequence))
+  colnames(points_regarding_r_sphere) <- sequence
+  
+  n <- 1
+  for(i in sequence)
   {
     points_cube_count = list()
     points_sphere_count=list()
     
-    points_in_cube <- all_points_in_cube[[dimension]]
+    points_in_cube <- all_points_in_cube[[current_dimension]]
     for(point in points_in_cube){
       distance <- dist(rbind(center_coordinate, point))
       if(distance < i){
@@ -121,7 +129,7 @@ for (current_dimension in dimensions){
       }
     }
     
-    points_in_sphere = all_points_in_sphere[[dimension]]
+    points_in_sphere = all_points_in_sphere[[current_dimension]]
     for(point in points_in_sphere){
       distance <- dist(rbind(center_coordinate, point))
       if(distance < i){
@@ -129,21 +137,73 @@ for (current_dimension in dimensions){
       }
     }
     
-    points_regarding_r_cube[,i]<-length(points_cube_count)
-    points_regarding_r_sphere[,i]<-length(points_sphere_count)
+    points_regarding_r_cube[,n]<-length(points_cube_count)
+    points_regarding_r_sphere[,n]<-length(points_sphere_count)
+    n <- n +1
   }
   
-  #final = dim(rbind(points_regarding_r_sphere, points_regarding_r_cube))
-  #barplot(points_regarding_r_cube ,main = "Number of point in R range", xlab = "R", ylab = "Number of elements", col = "darkblue")
   
   final <- list(points_regarding_r_sphere, points_regarding_r_cube)
   final <- do.call(rbind, final)
   
-  #your data...
-  #...and you are sorted
-  png(file = paste(toString(dimension),paste("_distance_from_center_sphere_cube_n",current_dimension,".png"),sep="")) 
+  png(file = paste(toString(current_dimension),paste("_distance_from_center_sphere_cube_n",current_dimension,".png"),sep="")) 
   barplot(final, xlab = "R", ylab = "Number of points", main = paste("Number of points <R for N=",current_dimension,sep = ""), legend = c("Sphere", "Cube"), col=c("yellow","red"))
   dev.off()
 }
 
 
+
+#Generate plots with given dimensions 2D
+dimensions = c(10,50,100,150,200)
+for(current_dimension in dimensions){
+  coordinates <- runif(current_dimension, -side_lenght_hypercube/2, side_lenght_hypercube/2)
+  r_distance = side_lenght_hypercube
+  center_coordinate = c(0,0)
+  
+  points_in_cube <- all_points_in_cube[[current_dimension]]
+  points_in_cube <- points_in_cube[,c(1,2)]
+  
+  points_in_sphere = all_points_in_sphere[[current_dimension]]
+  points_in_sphere <- points_in_sphere[,c(1,2)]
+  
+  sequence <- seq(r_distance/10, r_distance, by=(r_distance/10))
+  sequence <- lapply(sequence, function(x) round(x, digits = 2))
+  
+  points_regarding_r_cube = matrix(NA, 1, length(sequence))
+  colnames(points_regarding_r_cube) <- sequence
+  points_regarding_r_sphere = matrix(NA, 1, length(sequence))
+  colnames(points_regarding_r_sphere) <- sequence
+  
+  n <- 1
+  for(i in sequence)
+  {
+    points_cube_count = list()
+    points_sphere_count=list()
+    
+    points_in_cube <- all_points_in_cube[[current_dimension]]
+    for(point in points_in_cube){
+      distance <- dist(rbind(center_coordinate, point))
+      if(distance < i){
+        points_cube_count <- c(points_cube_count, distance)
+      }
+    }
+    
+    points_in_sphere = all_points_in_sphere[[current_dimension]]
+    for(point in points_in_sphere){
+      distance <- dist(rbind(center_coordinate, point))
+      if(distance < i){
+        points_sphere_count <- c(points_sphere_count, distance)
+      }
+    }
+    
+    points_regarding_r_cube[,n]<-length(points_cube_count)
+    points_regarding_r_sphere[,n]<-length(points_sphere_count)
+    n <- n +1
+  }
+
+  final <- list(points_regarding_r_sphere, points_regarding_r_cube)
+  final <- do.call(rbind, final)
+  png(file = paste(toString(current_dimension),paste("_distance_from_center_sphere_cube_2D_n",current_dimension,".png"),sep="")) 
+  barplot(final, xlab = "R", ylab = "Number of points", main = paste("Number of points <R for N=",current_dimension,sep = ""), legend = c("Sphere", "Cube"), col=c("yellow","red"))
+  dev.off()
+}
