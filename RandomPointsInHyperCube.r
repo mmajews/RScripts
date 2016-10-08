@@ -18,7 +18,7 @@ all_distances_beetwen_point_and_corner = list()
 
 for(current_dimension in minimum_dimension:maximum_dimension)
 {
-  corner_of_hypercube = rep(side_lenght_hypercube, current_dimension)
+  corner_of_hypercube = rep(side_lenght_hypercube/2, current_dimension)
   randomly_selected_points <- matrix(NA,2 * number_of_points_to_generate, current_dimension)
   distances_beetwen_points <- matrix(NA, number_of_points_to_generate, 1)
   distances_beetwen_point_and_corner <- matrix(NA, number_of_points_to_generate, 1)
