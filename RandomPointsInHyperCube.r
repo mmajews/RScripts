@@ -1,3 +1,5 @@
+library(stargazer)
+
 side_lenght_hypercube <- 10
 number_of_points_to_generate <-1000
 maximum_dimension <- 200
@@ -66,4 +68,8 @@ for(dimension in dimensions){
   hist(as.vector(all_distances_beetwen_point_and_corner[dimension][[1]]), main = paste("n=",toString(dimension),sep=""),xlab = "Distance between point and corner", col="darkgreen")
   dev.off()
 }
+
+#Table outputs
+stargazer(parameters_beetwen_points, type = "text", title="Point to point statistics", digits=1, out="point_to_point.txt")
+stargazer(parameters_beetwen_point_and_corner, type = "text", title="Point to corner statistics", digits=1, out="point_to_corner.txt")
 
