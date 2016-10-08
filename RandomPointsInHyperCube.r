@@ -55,11 +55,15 @@ dimensions =c(2,10,50,100,150,200)
 #Drawing for hypercube distances between points
 
 for(dimension in dimensions){
+  png(file = paste(toString(dimension),"_point_to_point.png",sep="") )
   hist(as.vector(all_distances_beetwen_points[dimension][[1]]), main = paste("n=",toString(dimension),sep=""),xlab = "Distance between points", col="darkgreen")
+  dev.off()
 }
 
 #Drawing for hypercube distances between point and fixed corner
 for(dimension in dimensions){
+  png(file = paste(toString(dimension),"_point_to_corner.png",sep="")) 
   hist(as.vector(all_distances_beetwen_point_and_corner[dimension][[1]]), main = paste("n=",toString(dimension),sep=""),xlab = "Distance between point and corner", col="darkgreen")
+  dev.off()
 }
 
