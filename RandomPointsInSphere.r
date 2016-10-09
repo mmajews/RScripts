@@ -41,15 +41,17 @@ for(current_dimension in minimum_dimension:maximum_dimension)
 dimensions = c(10, 50 , 100, 150 ,200)
 for(dimension in dimensions){
   points_in_cube <- all_points_in_cube[[dimension]]
-  points_in_cube <- points_in_cube[,c(1,2)]
+  points_in_cube <- prcomp(points_in_cube, center = TRUE, scale = TRUE)
+  points_in_cube <- points_in_cube$x[,1:2]
   
   points_in_sphere = all_points_in_sphere[[dimension]]
-  points_in_sphere <- points_in_sphere[,c(1,2)]
+  points_in_sphere <- prcomp(points_in_sphere, center = TRUE, scale = TRUE)
+  points_in_sphere <- points_in_sphere$x[,1:2]
   
   max_coord <- side_lenght_hypercube/2
   
   png(file = paste(toString(dimension),"_sphere_cube_on_2D.png",sep="")) 
-  plot(-max_coord:max_coord, -max_coord:max_coord, type = "n", asp = 1, main = paste("n=",toString(dimension),sep=""), xlab = "Points presented on 2D")
+  plot(-max_coord:max_coord, -max_coord:max_coord, type = "n", asp = 1, main = paste("n=",toString(dimension),sep=""), xlab = "Points presented on 2D", ylab = 'y')
   points(points_in_cube[,1], points_in_cube[,2], col = "red")
   points(points_in_sphere[,1], points_in_sphere[,2], col = "blue")
   draw.circle(0, 0, max_coord, border = "blue")
