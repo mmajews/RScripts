@@ -1,7 +1,7 @@
 library(stargazer)
 
 side_lenght_hypercube <- 10
-number_of_points_to_generate <-1000
+number_of_points_to_generate <-4000
 maximum_dimension <- 200
 minimum_dimension <- 2
 corner_of_hypercube = NA
@@ -29,22 +29,23 @@ for(current_dimension in minimum_dimension:maximum_dimension)
     randomly_selected_points[row_number,] <- coordinates_1
     row_number <- row_number + 1
     
-    distances_beetwen_point_and_corner[i,] <- dist(rbind(coordinates_1, corner_of_hypercube))
+    #Counting for corner of cube
+    distances_beetwen_point_and_corner[i,] <- dist(rbind(coordinates_1, corner_of_hypercube)) / sqrt(current_dimension)
     
     coordinates_2 <- runif(current_dimension, 0.0, side_lenght_hypercube)
     randomly_selected_points[row_number,] <- coordinates_2
     row_number <- row_number + 1
     
-    distances_beetwen_points[i,] <- dist(rbind(coordinates_1, coordinates_2))
+    distances_beetwen_points[i,] <- dist(rbind(coordinates_1, coordinates_2)) / sqrt(current_dimension)
   }
   
   variance <- var(distances_beetwen_points)
-  expected_value <- weighted.mean(distances_beetwen_points, rep(0.001, 1000))
+  expected_value <- mean(distances_beetwen_points)
   parameters_beetwen_points[current_dimension, ] <- c(current_dimension, variance, expected_value)
   all_distances_beetwen_points[[current_dimension]] <- distances_beetwen_points
   
   variance_point_corner <- var(distances_beetwen_point_and_corner)
-  expected_value_point_corner <- weighted.mean(distances_beetwen_point_and_corner, rep(0.001, 1000))
+  expected_value_point_corner <- mean(distances_beetwen_point_and_corner)
   parameters_beetwen_point_and_corner[current_dimension, ] <- c(current_dimension, variance_point_corner, expected_value_point_corner)
   all_distances_beetwen_point_and_corner[[current_dimension]] <-distances_beetwen_point_and_corner
   
@@ -70,6 +71,5 @@ for(dimension in dimensions){
 }
 
 #Table outputs
-stargazer(parameters_beetwen_points, type = "text", title="Point to point statistics", digits=1, out="point_to_point.txt")
-stargazer(parameters_beetwen_point_and_corner, type = "text", title="Point to corner statistics", digits=1, out="point_to_corner.txt")
-
+stargazer(parameters_beetwen_points, type = "text", title="Point to point statistics", digits=4, out="point_to_point.txt")
+stargazer(parameters_beetwen_point_and_corner, type = "text", title="Point to corner statistics", digits=4, out="point_to_corner.txt")
