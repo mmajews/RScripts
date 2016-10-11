@@ -64,7 +64,9 @@ averages_cube = matrix(NA, 1, maximum_dimension)
 colnames(averages_cube) <- do.call("expression", lapply(1:maximum_dimension, function(i) i))
 averages_sphere = matrix(NA, 1, maximum_dimension)
 colnames(averages_sphere) <- do.call("expression", lapply(1:maximum_dimension, function(i) i))
-for (dimension in minimum_dimension:maximum_dimension){
+dimensions = c(10,50,100,150,200)
+for (dimension in dimensions){
+  print(paste("Distances from 0 dimension: ", dimension, sep = ""))
   distances_cube = list()
   distances_sphere = list()
   
