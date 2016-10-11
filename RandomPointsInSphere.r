@@ -1,7 +1,7 @@
 library("plotrix")
 
 side_lenght_hypercube <- 10
-number_of_points_to_generate <-1500
+number_of_points_to_generate <-4000
 maximum_dimension <- 200
 minimum_dimension <- 3
 
