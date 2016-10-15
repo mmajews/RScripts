@@ -15,8 +15,8 @@ cov_eigen_vectors <- eigen(covariance)$vectors
 plot <- ggplot(elipse_points, aes(x=x, y=y)) + geom_point()
 plot <- plot + coord_cartesian(xlim = c(-scale,scale), ylim = c(-scale,scale))
 plot <- plot + geom_segment(aes(x = 0, y = 0, xend = cov_eigen_vectors[1,1], yend = cov_eigen_vectors[1,2]),
-                            arrow = arrow(length = unit(0.5, "cm")), size=2, color="blue")
+                            arrow = arrow(), size=1, color="blue")
 plot <- plot + geom_segment(aes(x = 0, y = 0, xend = cov_eigen_vectors[2,1], yend = cov_eigen_vectors[2,2]),
-                            arrow = arrow(length = unit(0.5, "cm")),  size=2, color="red")
+                            arrow = arrow(),  size=1, color="red")
 print(plot)
 
