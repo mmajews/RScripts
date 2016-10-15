@@ -1,3 +1,7 @@
+library(ggfortify)
+library(ggplot2)
+library(plotly)
+
 list <- read.csv('nyt-frame.csv')
 data <- as.matrix(list)
 
@@ -63,4 +67,23 @@ print(head(components[,-2, drop=FALSE], n= 30))
 components <- components[order(components$PC2,decreasing = TRUE),]
 print(head(components[,-1, drop=FALSE], n= 30))
 
+
+#2D Plot
+visual1 <- as.data.frame(pca_arts$rotation[,1:2])
+visual2 <- as.data.frame(pca_music$rotation[,1:2])
+visual1$group <- 'Arts'
+visual2$group <- 'Music'
+visual12 <- rbind(visual1, visual2)
+p <- ggplot(visual12, aes(x=PC1, y=PC2, group=group, col=group, fill=group)) + geom_point()
+print(p)
+
+
+#3D Plot
+visual1 <- as.data.frame(pca_arts$rotation[,1:3])
+visual2 <- as.data.frame(pca_music$rotation[,1:3])
+visual1$group <- 'Arts'
+visual2$group <- 'Music'
+visual12 <- rbind(visual1, visual2)
+p <- ggplot(visual12, aes(x=PC1, y=PC2, group=group, col=group, fill=group)) + geom_point()
+print(p)
 
